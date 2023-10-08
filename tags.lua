@@ -44,11 +44,26 @@ M.global_mapping = function()
 	local keys = {}
 
 	keys = gears.table.join(
-		awful.key({ Modkey }, "Left", awful.tag.viewprev, { description = "view previous", group = "tag" }),
-		awful.key({ Modkey }, "Right", awful.tag.viewnext, {
-			description = "view next",
-			group = "tag",
-		}),
+		awful.key({ Modkey, "Control" }, "p", function()
+			local src_screen = awful.screen.focused()
+			local src_tag = src_screen.selected_tag
+			awful.screen.focus_relative(-1)
+			local dst_screen = awful.screen.focused()
+			local dst_tag = dst_screen.tags[1]
+			dst_tag:swap(src_tag)
+			dst_tag:view_only()
+			src_tag:view_only()
+		end, { description = "Move tag to previous screen", group = "tag" }),
+		awful.key({ Modkey, "Control" }, "n", function()
+			local src_screen = awful.screen.focused()
+			local src_tag = src_screen.selected_tag
+			awful.screen.focus_relative(1)
+			local dst_screen = awful.screen.focused()
+			local dst_tag = dst_screen.tags[1]
+			dst_tag:swap(src_tag)
+			dst_tag:view_only()
+			src_tag:view_only()
+		end, { description = "Move tag to next screen", group = "tag" }),
 		awful.key({ Modkey }, "Escape", awful.tag.history.restore, { description = "go back", group = "tag" })
 	)
 
