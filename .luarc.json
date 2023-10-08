@@ -1,0 +1,8 @@
+{
+    "Lua.workspace.checkThirdParty": false,
+    "Lua": {
+        "diagnostics": {
+            "globals": ["awesome", "client", "root", "screen"]
+        }
+    }
+}

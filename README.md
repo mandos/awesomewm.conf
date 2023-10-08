@@ -1,2 +1,3 @@
-# awesomewm.dotfiles
+# awesomewm.conf
+
 My configuration of AwesomeWM
