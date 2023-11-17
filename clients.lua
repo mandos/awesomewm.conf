@@ -21,7 +21,7 @@ local clientkeys = gears.table.join(
 	awful.key({ Modkey, "Control" }, "Return", function(c)
 		c:swap(awful.client.getmaster())
 	end, { description = "move to master", group = "client" }),
-	awful.key({ Modkey }, "o", function(c)
+	awful.key({ Modkey, "Shift" }, "o", function(c)
 		c:move_to_screen()
 	end, { description = "move to screen", group = "client" }),
 	awful.key({ Modkey }, "t", function(c)
@@ -116,9 +116,9 @@ M.rules = function()
 			rule_any = { type = { "normal", "dialog" } },
 			properties = { titlebars_enabled = true },
 		},
-		{ rule = { role = "browser" }, properties = { tag = "7-web", screen = 2 } },
-		{ rule = { class = "Slack" }, properties = { tag = "6-slack", screen = 3 } },
-		{ rule = { class = "Emacs" }, properties = { tag = "0-emacs", screen = 2 } },
+		-- { rule = { role = "browser" }, properties = { tags = { "2-web", "9-web" } } },
+		{ rule = { class = "Slack" }, properties = { tag = "6-slack" } },
+		-- { rule = { class = "Emacs" }, properties = { tag = "0-emacs" } },
 	}
 end
 

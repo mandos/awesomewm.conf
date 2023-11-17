@@ -169,7 +169,8 @@ end
 -- Re-set wallpaper when a screen's geometry changes (e.g. different resolution)
 screen.connect_signal("property::geometry", set_wallpaper)
 
-screens.init(tags.get_screen_tags)
+-- screens.init(tags.get_screen_tags)
+screens.init(tags.tags())
 
 -- }}}
 
@@ -358,3 +359,5 @@ client.connect_signal("unfocus", function(c)
 	c.border_color = beautiful.border_normal
 end)
 -- }}}
+
+require("autorun")

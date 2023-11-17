@@ -50,14 +50,32 @@ local tasklist_buttons = gears.table.join(
 )
 
 ---Create a configuration for all screens
----@param tags fun(screen):table
+---@param tags table
 M.init = function(tags)
 	awful.screen.connect_for_each_screen(function(s)
 		-- Wallpaper
 		-- set_wallpaper(s)
 
 		-- Each screen has its own tag table.
-		awful.tag(tags(s.index), s, awful.layout.layouts[1])
+		-- awful.tag(tags(s.index), s, awful.layout.layouts[1])
+		if s.index == 1 then
+			for _, tag in ipairs(tags) do
+				awful.tag.add(tag.label, {
+					screen = s,
+					layout = tag.layout,
+					layouts = tag.layouts,
+				})
+			end
+			s.tags[1]:view_only()
+		elseif s.index == 2 then
+			t = awful.tag.find_by_name(nil, "8-term")
+			t.screen = s
+			t:view_only()
+		elseif s.index == 3 then
+			t = awful.tag.find_by_name(nil, "6-slack")
+			t.screen = s
+			t:view_only()
+		end
 
 		-- Create a promptbox for each screen
 		s.mypromptbox = awful.widget.prompt()
@@ -81,7 +99,7 @@ M.init = function(tags)
 		-- Create a taglist widget
 		s.mytaglist = awful.widget.taglist({
 			screen = s,
-			filter = awful.widget.taglist.filter.all,
+			filter = awful.widget.taglist.filter.noempty,
 			buttons = taglist_buttons,
 		})
 
@@ -119,13 +137,12 @@ end
 M.global_mapping = function()
 	local keys = {}
 	-- Move to first tag of specific screen
-	for i = 1, 3 do
+	for i = 2, 4 do
 		keys = gears.table.join(
 			keys,
 			awful.key({ Modkey, "Control" }, i, function()
-				awful.screen.focus(screen[i])
-				screen[i].tags[1]:view_only()
-			end, { description = "focus on " .. i .. " screen", group = "screen" })
+				awful.screen.focus(screen[i - 1])
+			end, { description = "focus on " .. i - 1 .. " screen", group = "screen" })
 		)
 	end
 
