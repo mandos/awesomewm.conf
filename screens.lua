@@ -68,7 +68,7 @@ M.init = function(tags)
 			end
 			s.tags[1]:view_only()
 		elseif s.index == 2 then
-			t = awful.tag.find_by_name(nil, "8-term")
+			t = awful.tag.find_by_name(nil, "7-term")
 			t.screen = s
 			t:view_only()
 		elseif s.index == 3 then

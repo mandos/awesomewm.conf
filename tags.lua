@@ -4,10 +4,6 @@ local naughty = require("naughty")
 
 local M = {}
 
-local screen_1 = 1
-local screen_2 = 2
-local screen_3 = 3
-
 local term_layouts = {
 	awful.layout.suit.tile,
 	awful.layout.suit.max,
@@ -17,40 +13,18 @@ local app_layouts = {
 	awful.layout.suit.max,
 }
 
-local custom_tags = {
-	{ label = "1-app", key = 1, screen = screen_1, layouts = app_layouts, layout = app_layouts[1] },
-	{ label = "2-web", key = 2, screen = screen_1, layouts = app_layouts, layout = app_layouts[1] },
-	{ label = "3-term", key = 3, screen = screen_1, layouts = term_layouts, layout = term_layouts[1] },
-	{ label = "4-term", key = 4, screen = screen_1, layouts = term_layouts, layout = term_layouts[1] },
-	{ label = "6-slack", key = 6, screen = screen_3, layouts = app_layouts, layout = app_layouts[1] },
-	{ label = "5-app", key = 5, screen = screen_1, layouts = app_layouts, layout = app_layouts[1] },
-	{ label = "7-term", key = 7, screen = screen_2, layouts = term_layouts, layout = term_layouts[1] },
-	{ label = "8-term", key = 8, screen = screen_1, layouts = term_layouts, layout = term_layouts[1] },
-	{ label = "9-web", key = 9, screen = screen_1, layouts = app_layouts, layout = app_layouts[1] },
-	{ label = "0-emacs", key = 0, screen = screen_1, layouts = app_layouts, layout = app_layouts[1] },
+M.tags = {
+	{ label = "1-app", key = 1, layouts = app_layouts, layout = app_layouts[1] },
+	{ label = "2-web", key = 2, layouts = app_layouts, layout = app_layouts[1] },
+	{ label = "3-term", key = 3, layouts = term_layouts, layout = term_layouts[1] },
+	{ label = "4-term", key = 4, layouts = term_layouts, layout = term_layouts[1] },
+	{ label = "6-slack", key = 6, layouts = app_layouts, layout = app_layouts[1] },
+	{ label = "5-app", key = 5, layouts = app_layouts, layout = app_layouts[1] },
+	{ label = "7-term", key = 7, layouts = term_layouts, layout = term_layouts[1] },
+	{ label = "8-term", key = 8, layouts = term_layouts, layout = term_layouts[1] },
+	{ label = "9-web", key = 9, layouts = app_layouts, layout = app_layouts[1] },
+	{ label = "0-emacs", key = 0, layouts = app_layouts, layout = app_layouts[1] },
 }
-
-M.tags = function()
-	return custom_tags
-end
-
-M.get_screen_tags = function(screen_nr)
-	local tags = {}
-	for _, v in pairs(custom_tags) do
-		if v.screen == screen_nr then
-			table.insert(tags, #tags + 1, v.label)
-		end
-	end
-	return tags
-end
-
-M.get_all_tags = function()
-	local tags = {}
-	for _, v in pairs(custom_tags) do
-		tags[v.key] = v.label
-	end
-	return tags
-end
 
 M.global_mapping = function()
 	local keys = {}
@@ -84,38 +58,35 @@ end
 
 M.mapping = function()
 	local keys = {}
-	for key, label in pairs(M.get_all_tags()) do
+	for _, tag in pairs(M.tags) do
 		keys = gears.table.join(
 			keys,
-			awful.key({ Modkey }, key, function()
-				local from_tag = awful.screen.focused().selected_tag
-				local to_tag = awful.tag.find_by_name(nil, label)
-				if from_tag == to_tag then
+			awful.key({ Modkey }, tag.key, function()
+				local curr_tag = awful.screen.focused().selected_tag
+				local with_tag = awful.tag.find_by_name(nil, tag.label)
+				if curr_tag == with_tag then
 					return
 				end
-
-				if from_tag and to_tag then
-					local selected = to_tag.selected
-					local focused = awful.screen.focused()
-					from_tag:swap(to_tag)
-					if selected then
-						from_tag:view_only()
-					else
-						from_tag.selected = false
-					end
-					to_tag:view_only()
-					awful.screen.focus(focused)
+				-- keep information if with_tag is selected, so I can keep it for current tag after swap
+				local selected = with_tag.selected
+				with_tag:swap(curr_tag)
+				if selected then
+					curr_tag:view_only()
+				else
+					curr_tag.selected = false
 				end
-			end, { description = "swap tag with " .. label, group = "tag" }),
-			awful.key({ Modkey, "Shift" }, key, function()
+				awful.screen.focus(with_tag.screen)
+				with_tag:view_only()
+			end, { description = "swap tag with " .. tag.label, group = "tag" }),
+			awful.key({ Modkey, "Shift" }, tag.key, function()
 				if client.focus then
-					local tag = awful.tag.find_by_name(nil, label)
+					local tag = awful.tag.find_by_name(nil, tag.label)
 					if tag then
 						client.focus:move_to_tag(tag)
 						tag:view_only()
 					end
 				end
-			end, { description = "move client to " .. label, group = "tag" })
+			end, { description = "move client to " .. tag.label, group = "tag" })
 		)
 	end
 	return keys

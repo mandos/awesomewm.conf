@@ -169,8 +169,7 @@ end
 -- Re-set wallpaper when a screen's geometry changes (e.g. different resolution)
 screen.connect_signal("property::geometry", set_wallpaper)
 
--- screens.init(tags.get_screen_tags)
-screens.init(tags.tags())
+screens.init(tags.tags)
 
 -- }}}
 
